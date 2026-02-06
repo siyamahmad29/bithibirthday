@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday - My Forever Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700&family=Great+Vibes&family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff9a9e;
+            --glass: rgba(255, 255, 255, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --text-dark: #2d3436;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- 1. NEW INTRO SCREEN (FIXED) --- */
+        #intro-screen {
+            position: fixed; inset: 0; 
+            background: radial-gradient(circle at center, #2b2b2b 0%, #000000 100%);
+            z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s ease-out;
+        }
+
+        /* The New "Magical" Box Style */
+        .gift-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        /* Bouncing Animation */
+        .gift-wrapper:hover { transform: scale(1.05); }
+
+        .new-gift-box {
+            width: 160px; height: 140px;
+            background: linear-gradient(135deg, #ff3f34, #ef5777);
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(239, 87, 119, 0.6); /* Glowing Effect */
+            position: relative;
+            z-index: 2;
+            animation: floatBox 3s ease-in-out infinite;
+        }
+
+        .gift-lid {
+            width: 180px; height: 50px;
+            background: #ff5e57;
+            border-radius: 10px;
+            position: absolute;
+            top: -20px; left: -10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 3;
+        }
+
+        .ribbon-vertical {
+            width: 30px; height: 100%; background: #ffd700;
+            position: absolute; left: 50%; transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .bow {
+            position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 40px;
+            background: transparent;
+        }
+        .bow::before, .bow::after {
+            content: ''; position: absolute; top: 0; width: 40px; height: 40px;
+            border: 8px solid #ffd700; border-radius: 50%;
+        }
+        .bow::before { left: -20px; transform: rotate(-20deg); }
+        .bow::after { right: -20px; transform: rotate(20deg); }
+
+        .click-msg {
+            margin-top: 60px; color: white; font-family: 'Cinzel', serif;
+            letter-spacing: 4px; animation: pulse 1.5s infinite; pointer-events: none;
+        }
+
+        /* Shake Animation for Click */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shaking { animation: shake 0.5s; }
+
+        @keyframes floatBox { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        /* --- 2. MAIN CONTENT (THEME PRESERVED) --- */
+        #main-content { display: none; opacity: 0; transition: opacity 2s ease; }
+        
+        .bg-gradient {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+        }
+
+        /* Hero */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .hero h1 { font-family: 'Cinzel', serif; font-size: 3rem; color: var(--text-dark); margin: 20px 0; }
+        .glass-box {
+            background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
+            padding: 40px; border-radius: 20px; max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .hero-image {
+            width: 200px; height: 200px; border-radius: 50%; object-fit: cover;
+            border: 5px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 10px; animation: floatBox 4s ease-in-out infinite;
+        }
+        
+        /* Hanging Gallery */
+        .gallery { padding: 50px 0; text-align: center; overflow: hidden; }
+        .string-row { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 50px; }
+        .photo-card {
+            background: white; padding: 15px 15px 40px 15px; width: 260px;
+            transform: rotate(-2deg); box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s; position: relative;
+        }
+        .photo-card::before { /* String */
+            content: ''; position: absolute; top: -100px; left: 50%; height: 100px; width: 2px; background: #999; z-index: -1;
+        }
+        .photo-card:hover { transform: rotate(0deg) scale(1.05); z-index: 10; }
+        .photo-card img { width: 100%; height: 220px; object-fit: cover; }
+        .caption { font-family: 'Great Vibes', cursive; font-size: 1.5rem; margin-top: 10px; color: #444; }
+
+
+        /* --- NEW SECTIONS --- */
+        section { padding: 60px 20px; text-align: center; }
+        section h2 { 
+            font-family: 'Cinzel', serif; font-size: 2.2rem; margin-bottom: 40px; color: var(--primary);
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        }
+
+        /* 1. Our Beautiful Memories (Enhanced Gallery) */
+        .memories-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px; max-width: 1200px; margin: 0 auto;
+        }
+        .memory-item {
+            position: relative; overflow: hidden; border-radius: 15px; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.3s;
+        }
+        .memory-item img { width: 100%; height: 300px; object-fit: cover; transition: transform 0.5s; }
+        .memory-item:hover img { transform: scale(1.1); }
+        .memory-item:hover { transform: translateY(-5px); }
+
+        /* 2. Our Story (Timeline) */
+        .timeline {
+            max-width: 800px; margin: 0 auto; position: relative; padding: 20px 0;
+        }
+        .timeline::before {
+            content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: var(--secondary);
+            transform: translateX(-50%); border-radius: 2px;
+        }
+        .timeline-event {
+            position: relative; width: 50%; padding: 20px 40px; text-align: left;
+            box-sizing: border-box;
+        }
+        .timeline-event:nth-child(odd) { left: 0; text-align: right; }
+        .timeline-event:nth-child(even) { left: 50%; }
+        .timeline-event::before {
+            content: ''; position: absolute; width: 20px; height: 20px; background: var(--primary);
+            border-radius: 50%; top: 25px; border: 4px solid white; box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.2);
+        }
+        .timeline-event:nth-child(odd)::before { right: -14px; }
+        .timeline-event:nth-child(even)::before { left: -14px; }
+        .event-card {
+            background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 3. Special Video */
+        .video-container {
+            max-width: 900px; margin: 0 auto; background: black; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); aspect-ratio: 16 / 9;
+        }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
+
+        /* 4. Yearly Albums */
+        .album-grid {
+            display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 30px;
+        }
+        .album-folder {
+            width: 200px; height: 240px; background: #fff; border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: transform 0.3s; cursor: pointer; border: 1px solid rgba(0,0,0,0.05);
+        }
+        .album-folder::before {
+            content: ''; position: absolute; top: -10px; left: 0; width: 40%; height: 10px;
+            background: #ffeaa7; border-radius: 10px 10px 0 0;
+        }
+        .album-folder:hover { transform: translateY(-10px) rotate(2deg); }
+        .album-cover { width: 90%; height: 75%; overflow: hidden; border-radius: 5px; margin-top: 10px; }
+        .album-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .album-title { margin-top: 10px; font-weight: 600; color: #555; }
+
+        /* 5. Special Moments */
+        .moments-row {
+            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+        }
+        .moment-card {
+            width: 300px; background: rgba(255, 255, 255, 0.4); padding: 15px; border-radius: 15px; border: 1px solid var(--glass-border);
+        }
+        .moment-card h3 { margin: 15px 0 10px; font-family: 'Montserrat', sans-serif; color: var(--primary); }
+
+        /* Interactive Letter Button */
+        .action-area { padding: 100px 20px; text-align: center; }
+        .open-btn {
+            background: var(--primary); color: white; padding: 15px 40px; font-size: 1.2rem;
+            border: none; border-radius: 50px; cursor: pointer; font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 5px 20px rgba(255, 77, 109, 0.5); transition: transform 0.2s;
+        }
+        .open-btn:hover { transform: scale(1.1); }
+
+        /* Letter Overlay */
+        #letter-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .letter-paper {
+            width: 90%; max-width: 550px; min-height: 400px; background: #fffdf2;
+            padding: 40px; position: relative; font-family: 'Noto Serif Bengali', serif;
+            font-size: 1.2rem; line-height: 1.8; box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            transform: translateY(50px); opacity: 0; transition: all 0.5s;
+        }
+        .letter-paper.visible { transform: translateY(0); opacity: 1; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer; color: #aaa; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            
+            /* Hero adjustments */
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .glass-box { padding: 20px; width: 90%; }
+            .hero-image { width: 150px; height: 150px; }
+
+            /* Gallery & Grids */
+            .gallery { padding: 30px 0; }
+            .memories-grid { grid-template-columns: 1fr; padding: 0 10px; }
+            .memory-item img { height: 250px; }
+            
+            /* Timeline (Vertical on Mobile) */
+            .timeline::before { left: 20px; }
+            .timeline-event { width: 100%; padding-left: 50px; padding-right: 15px; text-align: left !important; }
+            .timeline-event:nth-child(even) { left: 0; }
+            .timeline-event:nth-child(odd) { left: 0; }
+            
+            .timeline-event::before {
+                left: 11px !important; right: auto !important;
+            }
+
+            /* Moments */
+            .moment-card { width: 100%; max-width: 350px; margin-bottom: 20px; }
+            
+            /* Letter */
+            .letter-paper { padding: 20px; font-size: 1rem; width: 95%; max-height: 80vh; overflow-y: auto; }
+
+            /* General */
+            section { padding: 40px 15px; }
+            section h2 { font-size: 1.8rem; }
+            
+            .album-folder { width: 140px; height: 180px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <div class="gift-wrapper" id="gift-box-trigger" onclick="triggerOpenSequence()">
+            <div class="new-gift-box">
+                <div class="gift-lid">
+                    <div class="ribbon-vertical"></div>
+                    <div class="bow"></div>
+                </div>
+                <div class="ribbon-vertical"></div>
+            </div>
+        </div>
+        <div class="click-msg">TAP TO OPEN</div>
+    </div>
+
+    <div class="bg-gradient"></div>
+
+    <div id="main-content">
+        
+        <section class="hero">
+            <div class="glass-box">
+                <img src="p.jpg" class="hero-image" alt="Profile">
+                <p style="font-family: 'Great Vibes', cursive; font-size: 2.5rem; color: var(--primary);">To My Love</p>
+                <h1>Happy Birthday Nargis Sultana Bithi</h1>
+                <p style="font-family: 'Noto Serif Bengali', serif; font-size: 1.1rem; color: #555;">
+                    জন্মদিনের অনেক অনেক শুভেচ্ছা।<br>তুমি সবসময় ভালো থাকো।
+                </p>
+            </div>
+        </section>
+
+
+        <!-- 1. Our Beautiful Memories -->
+        <section class="gallery">
+            <h2>💖 Our Beautiful Memories</h2>
+            <div class="memories-grid">
+                <div class="memory-item">
+                    <img src="m1.jpeg" alt="Memory 1">
+                </div>
+                <div class="memory-item">
+                    <img src="m2.jpeg" alt="Memory 2">
+                </div>
+                <div class="memory-item">
+                    <img src="m3.jpg" alt="Memory 3">
+                </div>
+                <div class="memory-item">
+                    <img src="m4.jpeg" alt="Memory 4">
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Our Story -->
+        <section class="story-section">
+            <h2>Our Story</h2>
+            <div class="timeline">
+                <div class="timeline-event">
+                    <div class="event-card">
+                        <h3>First Meeting</h3>
+                        <p>২০১৫ সালের ২৪ ফেব্রুয়ারি—একটি স্মরণীয় দিন। আমার ছোট খালার মৃত্যুদিনে আমাদের প্রথম দেখা হয়। সেই প্রথম দেখাতেই তার সরল, ছোট্ট মেয়ের মতো চেহারা আমাকে গভীরভাবে নাড়া দেয়। খোলা চুলের একটি ছবি দেখার পর অনুভূতিটা আরও দৃঢ় হয়।</p>
+                    </div>
+                </div>
+                <div class="timeline-event">
+                    <div class="event-card">
+                        <h3>First Date</h3>
+                        <p>আমাদের প্রথম ঘোরাঘুরি ছিল গ্রামের বিখ্যাত গ্রিন রোডে। সেই দিনটি ছিল সহজ, শান্ত এবং মনে রাখার মতো।</p>
+                    </div>
+                </div>
+                <div class="timeline-event">
+                    <div class="event-card">
+                        <h3>Milestone</h3>
+                        <p>জীবনের নানা চড়াই–উতরাই পেরিয়ে ২০২১ সালের ২৫ ফেব্রুয়ারি আমরা বিবাহবন্ধনে আবদ্ধ হই এবং নতুন জীবন শুরু করি।</p>
+                    </div>
+                </div>
+                <div class="timeline-event">
+                    <div class="event-card">
+                        <h3>A New Beginning</h3>
+                        <p>২০২২ সালের ৬ মার্চ আমাদের কোলজুড়ে আসে আদিল—আমাদের জীবনের আলো।</p>
+                    </div>
+                </div>
+                <div class="timeline-event">
+                    <div class="event-card">
+                        <h3>Today & Always</h3>
+                        <p>তোমাকে পেয়ে আমি কৃতজ্ঞ এবং সুখী। বাকি জীবনটুকু তোমার সঙ্গেই কাটাতে চাই।</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Special Moments -->
+        <section class="highlight-section">
+            <h2>Special Moments</h2>
+            <div class="moments-row">
+                <div class="moment-card">
+                    <img src="mo1.jpeg" style="width:100%; border-radius:10px;">
+                    <h3>Wedding Moments</h3>
+                    <p>Our special day captured in memories.</p>
+                </div>
+                <div class="moment-card">
+                    <img src="mo2.jpeg" style="width:100%; border-radius:10px;">
+                    <h3>Happy Family</h3>
+                    <p>With your baby Adil</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. A Special Video -->
+        <!-- <section class="video-section">
+            <h2>A Special Video</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/iwPpg9aoByo?si=sXroWM8K-jPTvirS" title="Special Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </section> -->
+
+        <!-- 5. Our Yearly Albums -->
+        <section class="album-section">
+            <h2>Our Yearly Albums</h2>
+            <div class="album-grid">
+                <div class="album-folder">
+                    <div class="album-cover"><img src="2022.jpg" alt="2022"></div>
+                    <div class="album-title">2022</div>
+                </div>
+                <div class="album-folder">
+                    <div class="album-cover"><img src="2023.jpg" alt="2023"></div>
+                    <div class="album-title">2023</div>
+                </div>
+                <div class="album-folder">
+                    <div class="album-cover"><img src="2024.jpg" alt="2024"></div>
+                    <div class="album-title">2024</div>
+                </div>
+                 <div class="album-folder">
+                    <div class="album-cover"><img src="2025.jpg" alt="2025"></div>
+                    <div class="album-title">2025</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="action-area">
+            <button class="open-btn" onclick="showLetter()">✨ Read Special Message</button>
+        </section>
+
+        <footer style="text-align: center; padding: 40px 20px; background: rgba(255,255,255,0.5); border-top: 1px solid var(--glass-border); margin-top: 50px;">
+            <p style="margin-bottom: 10px; font-size: 1rem;">Always with you ❤️</p>
+            <p style="font-weight: 700; font-size: 1.1rem; color: var(--primary); letter-spacing: 1px; font-family: 'Cinzel', serif;">
+                Developed by ChithiHub
+            </p>
+        </footer>
+    </div>
+
+    <div id="letter-modal">
+        <div class="letter-paper" id="paper">
+            <span class="close-btn" onclick="hideLetter()">&times;</span>
+            <div id="text-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- GIFT LOGIC ---
+        function triggerOpenSequence() {
+            const gift = document.getElementById('gift-box-trigger');
+            const intro = document.getElementById('intro-screen');
+            const main = document.getElementById('main-content');
+
+            // 1. Shake the box
+            gift.classList.add('shaking');
+
+            // 2. Explode confetti after 500ms
+            setTimeout(() => {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff4d6d', '#ffd700', '#ffffff']
+                });
+
+                // 3. Fade out intro
+                intro.style.opacity = '0';
+                
+                // 4. Show content
+                setTimeout(() => {
+                    intro.style.display = 'none';
+                    main.style.display = 'block';
+                    // Trigger reflow/fade-in
+                    setTimeout(() => main.style.opacity = '1', 50);
+                }, 800);
+            }, 500);
+        }
+
+        // --- TYPEWRITER LOGIC ---
+        const fullText = `জন্মদিনের অনেক অনেক শুভেচ্ছা। \n\nতুমি সবসময় ভালো থাকো, সুস্থ থাকো। এমনি করে আমার সাথে থাকো। \n\nএই দিনটা আমি কখনো ভুলবো না সবসময় স্মৃতি হয়ে থাকবে। \n\nআমি তোমাকে অনেক ভালোবাসি।`;
+        let charIndex = 0;
+        let isWriting = false;
+
+        function typeWriter() {
+            if (charIndex < fullText.length) {
+                const char = fullText.charAt(charIndex);
+                document.getElementById("text-content").innerHTML += (char === '\n') ? '<br>' : char;
+                charIndex++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+
+        function showLetter() {
+            const modal = document.getElementById('letter-modal');
+            const paper = document.getElementById('paper');
+            
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                paper.classList.add('visible');
+                if (!isWriting) {
+                    isWriting = true;
+                    setTimeout(typeWriter, 500);
+                }
+            }, 50);
+        }
+
+        function hideLetter() {
+            const modal = document.getElementById('letter-modal');
+            const paper = document.getElementById('paper');
+            
+            paper.classList.remove('visible');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
