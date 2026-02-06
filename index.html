@@ -25,14 +25,110 @@
             min-height: 100vh;
         }
 
+        /* --- PASSWORD SCREEN --- */
+        #password-screen {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s ease-out;
+        }
+
+        .password-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .lock-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .password-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+
+        .password-input {
+            width: 280px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .password-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .password-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(255, 77, 109, 0.4);
+        }
+
+        .submit-btn {
+            display: block;
+            width: 160px;
+            margin: 20px auto 0 auto; 0 auto;
+            padding: 12px 25px;
+            font-size: 0.95rem;em;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary), #ff8a9e);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.5);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            animation: shake 0.5s;
+        }
+
+        .hint-text {
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 30px;
+            font-size: 0.85rem;
+        }
+
+        /* ...existing code... */
+        
         /* --- 1. NEW INTRO SCREEN (FIXED) --- */
         #intro-screen {
             position: fixed; inset: 0; 
             background: radial-gradient(circle at center, #2b2b2b 0%, #000000 100%);
             z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: none; /* Hidden until password is correct */
+            flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 1s ease-out;
         }
+
+        /* ...existing code... */
 
         /* The New "Magical" Box Style */
         .gift-wrapper {
@@ -251,6 +347,10 @@
         /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 768px) {
             
+            /* Password screen */
+            .password-title { font-size: 1.4rem; }
+            .password-input, .submit-btn { width: 240px; }
+
             /* Hero adjustments */
             .hero h1 { font-size: 2rem; }
             .hero p { font-size: 1rem; }
@@ -288,6 +388,18 @@
 </head>
 <body>
 
+    <!-- PASSWORD SCREEN -->
+    <div id="password-screen">
+        <div class="password-container">
+            <div class="lock-icon">🔐</div>
+            <h2 class="password-title">Enter Secret Password</h2>
+            <input type="password" id="password-input" class="password-input" placeholder="Enter password..." onkeypress="handleKeyPress(event)">
+            <button class="submit-btn" onclick="checkPassword()">UNLOCK</button>
+            <p id="error-msg" class="error-message">❌ Incorrect password! Try again.</p>
+            <p class="hint-text">Hint: Something special 💕</p>
+        </div>
+    </div>
+
     <div id="intro-screen">
         <div class="gift-wrapper" id="gift-box-trigger" onclick="triggerOpenSequence()">
             <div class="new-gift-box">
@@ -305,13 +417,14 @@
 
     <div id="main-content">
         
+        <!-- ...existing code... -->
         <section class="hero">
             <div class="glass-box">
                 <img src="p.jpg" class="hero-image" alt="Profile">
                 <p style="font-family: 'Great Vibes', cursive; font-size: 2.5rem; color: var(--primary);">To My Love</p>
                 <h1>Happy Birthday Nargis Sultana Bithi</h1>
                 <p style="font-family: 'Noto Serif Bengali', serif; font-size: 1.1rem; color: #555;">
-                    জন্মদিনের অনেক অনেক শুভেচ্ছা।<br>তুমি সবসময় ভালো থাকো।
+                    জন্মদিনের অনেক অনেক শুভেচ্ছা।<br>তুমি সবসময় ভালো থাকো।
                 </p>
             </div>
         </section>
@@ -343,7 +456,7 @@
                 <div class="timeline-event">
                     <div class="event-card">
                         <h3>First Meeting</h3>
-                        <p>২০১৫ সালের ২৪ ফেব্রুয়ারি—একটি স্মরণীয় দিন। আমার ছোট খালার মৃত্যুদিনে আমাদের প্রথম দেখা হয়। সেই প্রথম দেখাতেই তার সরল, ছোট্ট মেয়ের মতো চেহারা আমাকে গভীরভাবে নাড়া দেয়। খোলা চুলের একটি ছবি দেখার পর অনুভূতিটা আরও দৃঢ় হয়।</p>
+                        <p>২০১৫ সালের ২৪ ফেব্রুয়ারি—একটি স্মরণীয় দিন। আমার ছোট খালার মৃত্যুদিনে আমাদের প্রথম দেখা হয়। সেই প্রথম দেখাতেই তার সরল, ছোট্ট মেয়ের মতো চেহারা আমাকে গভীরভাবে নাড়া দেয়। খোলা চুলের একটি ছবি দেখার পর অনুভূতিটা আরও দৃঢ় হয়।</p>
                     </div>
                 </div>
                 <div class="timeline-event">
@@ -355,19 +468,19 @@
                 <div class="timeline-event">
                     <div class="event-card">
                         <h3>Milestone</h3>
-                        <p>জীবনের নানা চড়াই–উতরাই পেরিয়ে ২০২১ সালের ২৫ ফেব্রুয়ারি আমরা বিবাহবন্ধনে আবদ্ধ হই এবং নতুন জীবন শুরু করি।</p>
+                        <p>জীবনের নানা চড়াই–উতরাই পেরিয়ে ২০২১ সালের ২৫ ফেব্রুয়ারি আমরা বিবাহবন্ধনে আবদ্ধ হই এবং নতুন জীবন শুরু করি।</p>
                     </div>
                 </div>
                 <div class="timeline-event">
                     <div class="event-card">
                         <h3>A New Beginning</h3>
-                        <p>২০২২ সালের ৬ মার্চ আমাদের কোলজুড়ে আসে আদিল—আমাদের জীবনের আলো।</p>
+                        <p>২০২২ সালের ৬ মার্চ আমাদের কোলজুড়ে আসে আদিল—আমাদের জীবনের আলো।</p>
                     </div>
                 </div>
                 <div class="timeline-event">
                     <div class="event-card">
                         <h3>Today & Always</h3>
-                        <p>তোমাকে পেয়ে আমি কৃতজ্ঞ এবং সুখী। বাকি জীবনটুকু তোমার সঙ্গেই কাটাতে চাই।</p>
+                        <p>তোমাকে পেয়ে আমি কৃতজ্ঞ এবং সুখী। বাকি জীবনটুকু তোমার সঙ্গেই কাটাতে চাই।</p>
                     </div>
                 </div>
             </div>
@@ -389,14 +502,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- 4. A Special Video -->
-        <!-- <section class="video-section">
-            <h2>A Special Video</h2>
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/iwPpg9aoByo?si=sXroWM8K-jPTvirS" title="Special Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-        </section> -->
 
         <!-- 5. Our Yearly Albums -->
         <section class="album-section">
@@ -441,6 +546,41 @@
     </div>
 
     <script>
+        // --- PASSWORD LOGIC ---
+        const CORRECT_PASSWORD = "bithi2025"; // Change this to your desired password
+
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            const passwordScreen = document.getElementById('password-screen');
+            const introScreen = document.getElementById('intro-screen');
+
+            if (input === CORRECT_PASSWORD) {
+                // Password correct - show gift box
+                passwordScreen.style.opacity = '0';
+                setTimeout(() => {
+                    passwordScreen.style.display = 'none';
+                    introScreen.style.display = 'flex';
+                }, 500);
+            } else {
+                // Password incorrect - show error
+                errorMsg.classList.add('show');
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-input').focus();
+                
+                // Hide error after 3 seconds
+                setTimeout(() => {
+                    errorMsg.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        }
+
         // --- GIFT LOGIC ---
         function triggerOpenSequence() {
             const gift = document.getElementById('gift-box-trigger');
@@ -473,7 +613,7 @@
         }
 
         // --- TYPEWRITER LOGIC ---
-        const fullText = `জন্মদিনের অনেক অনেক শুভেচ্ছা। \n\nতুমি সবসময় ভালো থাকো, সুস্থ থাকো। এমনি করে আমার সাথে থাকো। \n\nএই দিনটা আমি কখনো ভুলবো না সবসময় স্মৃতি হয়ে থাকবে। \n\nআমি তোমাকে অনেক ভালোবাসি।`;
+        const fullText = `জন্মদিনের অনেক অনেক শুভেচ্ছা। \n\nতুমি সবসময় ভালো থাকো, সুস্থ থাকো। এমনি করে আমার সাথে থাকো। \n\nএই দিনটা আমি কখনো ভুলবো না সবসময় স্মৃতি হয়ে থাকবে। \n\nআমি তোমাকে অনেক ভালোবাসি।`;
         let charIndex = 0;
         let isWriting = false;
 
